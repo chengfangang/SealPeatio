@@ -25,3 +25,5 @@ Despite the Python standard library, all python packages and modules used are:
 
 4. Node.js  
 Used to implement admin interface.
+
+## Instructions to run the code

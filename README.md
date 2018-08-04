@@ -24,4 +24,4 @@ Despite the Python standard library, all python packages and modules used are:
     * SimpleJSONRPCServer
 
 4. Node.js  
-Used admin interface
+Used to implement admin interface.

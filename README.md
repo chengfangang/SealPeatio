@@ -44,21 +44,23 @@ Compile Instructions:
 
 1. install Chocolatey
 
-2. install needed libs: choco install git, choco install golang, choco install mingw
+2. install needed libs:
+
+```
+choco install git
+choco install golang
+choco install mingw
+```
 
 3. run:
+
 ```
 set "GOPATH=%USERPROFILE%"
-
 set "Path=%USERPROFILE%\bin;%Path%"
-
 setx GOPATH "%GOPATH%"
-
 setx Path "%Path%"
-
 cd go-ethereum
-
 go install -v .\cmd\geth\
 ```
 
-4.find get.exe in folder go/bin
+4.find *get.exe* in folder *go/bin*

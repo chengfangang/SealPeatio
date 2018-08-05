@@ -1,4 +1,4 @@
-# Sealpeatio
+# SealPeatio
 
 Most exchange platforms today use software hot wallets to store virtual currencies. Those hot wallets have been frequently abused by hackers or inside employees to steal funds.  
 SealBlock is a next generation wallet product that leverages hardware enclave technology and policy management to maximize security protection of crypto funds while allowing them to be accessible for legitimate uses.  

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to Birthday Token Management Portal</title>
+    <link rel="shortcut icon" href="images/vericlouds_favicon.png" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/web3.js"></script>
+    <script type="text/javascript" src="js/ethereumjs-tx-1.3.3.js"></script>
+    <script type="text/javascript" src="js/buffer2.js"></script>
+</head>
+<body>
+    <div id="page-wrap">
+        <div>
+            <h2 id="head-title">Welcome to Birthday Token Management Portal</h2><img id="head-logo" src="images/logo-205x40.png" alt="logo">
+        </div>
+        <p></p>
+        <p>
+            <a href='https://etherscan.io/token/0x3b6f7e494f13b23a0e7d059d5caee5ef35bace79' target='_blank'>Birthday Token (BDT)</a>
+             is a virtual currency released on Feb. 04, 2018. The purpose of BDT is for celebrating birthdays and other memorable dates of your loved ones, such as your girl friend, wife, husband, kids, parents, best friends, etc.
+        </p>
+        <p>
+            You should send memorable number of BDT (e.g., 99.999999999, 777.77777777) to your loved ones at the date. It will be a very cool virtual gift for them and they can keep them for ever.
+        </p> 
+        <p></p>
+        <h2>
+            Send BDT to your loved ones
+        </h2>
+        <div id="contact-area">
+            <form method="post" action="#" id="send">
+                <label for="sender_address">
+                    Your address
+                </label>
+                <input type="text" name="sender_address" id="sender_address" placeholder="Your address"/>
+                <br>
+                <label for="_to">
+                    Loved one's address
+                </label>
+                <input type="text" name="_to" id="_to" placeholder="Loved one's address"/>
+                <br>
+                <label for="amount">
+                    Amount
+                </label>
+                <input type="text" name="amount" id="amount" placeholder="Amount"/>
+                <br>
+                <input type="submit" name="submit1" id="submit1" value="Send BDT" class="submit-button" />
+            </form>
+            <div style="clear: both;">
+                <p id="balance"></p>
+                <p id="send_result"></p>
+            </div>
+        </div>
+    </div>
+    <!-- VeriCloud SGX Demo JavaScript Code -->
+    <script type='text/javascript'>
+        function hexStringToByte(str) {
+            if (!str) {
+                return new Uint8Array();
+            }
+            var a = [];
+            for (var i = 0, len = str.length; i < len; i+=2) {
+                a.push(parseInt(str.substr(i,2),16));
+            }
+            
+            return new Uint8Array(a);
+        }
+
+        const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        console.log('Ethereum network is connected : ' + web3.isConnected())
+        
+        const contractAbi = web3.eth.contract([{"constant":false,"inputs":[{"name":"newSellPrice","type":"uint256"},{"name":"newBuyPrice","type":"uint256"}],"name":"setPrices","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"burn","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"sellPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"},{"name":"mintedAmount","type":"uint256"}],"name":"mintToken","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_value","type":"uint256"}],"name":"burnFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"buyPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"buy","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"frozenAccount","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"},{"name":"_extraData","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"},{"name":"freeze","type":"bool"}],"name":"freezeAccount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"initialSupply","type":"uint256"},{"name":"tokenName","type":"string"},{"name":"tokenSymbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"target","type":"address"},{"indexed":false,"name":"frozen","type":"bool"}],"name":"FrozenFunds","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Burn","type":"event"}]);
+        const contractAddress = '0xcecc4f5abeabb66bf4e10530ed4dc438a2e61367'
+        const myContract = contractAbi.at(contractAddress)
+        const decimal = 18;
+        const decimal_expand = 1000000000000000000;
+        const fromAccount = '0x092909281e47a186aff87db45380cc34ec2860ef'
+        const toAccount = '0xDb599C6EbBe7d91b69443F8a9A15097466844c53'
+        const privateKey = new ethereumjs.Buffer.Buffer('0a469d9840e5026cdc2ae4e76c6ddd4dbbfdc83086bd1f6c2e12ae9810caefcd', 'hex')
+
+        const tokenTotal = myContract.balanceOf(fromAccount)
+        console.log('App Token Balance = ' + tokenTotal.dividedBy(decimal_expand).toString(10))
+
+        const data = myContract.transfer.getData(toAccount, 1)
+        console.log('transfer data = ' + data)
+
+        const nonce = web3.toHex(web3.eth.getTransactionCount(fromAccount))
+        console.log('from account nonce = ' + nonce)
+
+        const txParams = {
+            nonce: nonce, //web3.toHex(21),
+            gasPrice: web3.toHex(5000000000), //web3.toHex(1000000000),
+            gasLimit: web3.toHex(910000), //web3.toHex(210000), //'0x2710',
+            from: fromAccount,
+            to: contractAddress,
+            value: '0x0', //web3.toHex(1000000000000000000),
+            data: data,
+            // EIP 155 chainId - mainnet: 1, ropsten: 3
+            chainId: '0x3'
+        }
+        
+        const tx = new ethereumjs.Tx(txParams)
+        tx.sign(privateKey)
+        const serializedTx = tx.serialize()
+        const signedTx = '0x' + serializedTx.toString('hex')
+
+        console.log('signed transcation = ' + signedTx)
+
+        web3.eth.sendRawTransaction(signedTx, function(err, hash) {
+            if (!err)
+            console.log(hash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
+        });
+
+    </script>
+    </body>
+</html>

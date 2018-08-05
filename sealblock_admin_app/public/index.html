@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to SealBlock Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/sealblock_favicon.ico" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/web3.js"></script>
+    <script src="js/ethereumjs-tx-1.3.3.js"></script>
+    <script src="js/buffer2.js"></script>
+</head>
+<body>
+    <div class="mdl-card mdl-shadow--2dp demo-card-wide" style="margin: 20px auto; width: 800px; padding: 40px">
+        <div style="margin: auto"><img id="head-logo" src="images/sealblock_logo.png" alt="logo"></div>
+        <div class="mdl-card__title" style="margin: auto">
+            <h2 class="mdl-card__title-text">Welcome to SealBlock Demo</h2>
+        </div>
+        <div>
+            <p style="font-size: 16px">
+                SealBlock hardware wallet leverages secure enclave (Intel SGX) to protect your digital assets from stolen. 
+            </p>
+            <p style="font-size: 16px">
+                In this demo, the SealBlock hardware wallet is configured with multi-sig access policy. 
+                The sensitive data (the private key of the wallet) and policy enforcement are sealed/encrypted within the secure enclave, 
+                which prevents anyone from stealing the key or circuventing the policy, including the operator of the wallet and hackers who have compromised the hosting OS.
+            </p> 
+            <p></p>
+            <p style="font-size: 16px">
+                The address of SealBlock hardware wallet is <b><span id='fromAccount'></span></b> (<span id='fromHolding'></span> ETH). To transfer ETH, <b>approvals from multiple people</b> will be required.
+            </p>
+        </div>
+        <div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 400px">
+                    <input class="mdl-textfield__input" type="text" pattern="^0[x,X].*" id="to_address" />
+                    <label class="mdl-textfield__label" for="to_address">Recipient address</label>
+                    <span class="mdl-textfield__error">Please use a hex number starting with 0x</span>
+                </div>
+            </div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 160px">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="amount">
+                    <label class="mdl-textfield__label" for="amount">Amount</label>
+                    <span class="mdl-textfield__error">Please use a number</span>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" id="signTx" style="width: 180px; margin-left: 20px">
+                    Transfer ETH
+                </button>
+            </div>
+    
+            <p>
+                <span id='signed_result'></span>
+            </p>
+        </div>
+    </div>
+    <!-- VeriCloud SGX Demo JavaScript Code -->
+    <script>
+        //const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        const web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        console.log('Ethereum test network is connected : ' + web3.isConnected())
+        // all const
+        
+        const decimal = 18;
+        const decimal_expand = 1000000000000000000;
+
+         var forfail = function(jqXHR, textStatus, errorThrown){
+            var errorText = JSON.stringify(jqXHR)
+            $('#signed_result').text(errorText)
+            console.error(errorText)
+        }
+        var addr = '0'
+
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                  tmp = item.split("=");
+                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }        
+
+        $( document ).ready(function() {
+
+            //const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UQ4gSLQXTJohbznyC7PP"))
+            const web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/UQ4gSLQXTJohbznyC7PP"))
+            console.log('Ethereum test network is connected : ' + web3.isConnected())
+
+            $.ajax({
+                    type: "POST",
+                    url: "/rpc",
+                    data: JSON.stringify({
+                        method: 'get_wallet_addr',
+                        data: findGetParameter('myaddr')
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                }).done(function(result, textStatus, jqXHR){
+                    if (result.error){
+                        console.log(result.error);
+                        $('#signed_result').text(result.error.message)
+                    }else{
+
+                        const fromAccount = result.result
+
+///////////
+       $('#fromAccount').text(fromAccount)
+
+        var balance = web3.eth.getBalance(fromAccount,function(err, result){
+            const amt = result.dividedBy(decimal_expand).toString(10)
+            $('#fromHolding').text(amt)
+        });
+        
+        //web3.eth.balanceOf(fromAccount, function(err, result){
+        //    const amt = result.dividedBy(decimal_expand).toString(10)
+        //    $('#fromHolding').text(amt)
+        //})
+        
+        var forfail = function(jqXHR, textStatus, errorThrown){
+                var errorText = JSON.stringify(jqXHR)
+                $('#signed_result').text(errorText)
+                console.error(errorText)
+            }
+        $('#signTx' ).click(function () {
+            var amount =  new Number($('#amount').val().trim() * decimal_expand).toLocaleString().replace(/,/g, "");
+            //const amount = $('#amount').val().trim() * decimal_expand
+            const toAddress = $('#to_address').val().trim()
+            //const data = contract.transfer.getData(toAccount, amount)
+            //console.log('transfer data = ' + data)
+
+            const nonce = web3.toHex(web3.eth.getTransactionCount(fromAccount))
+            console.log('from account nonce = ' + nonce)
+
+            const txParams = {
+                nonce: nonce, //web3.toHex(21),
+                gasPrice: web3.toHex(5000000000), //web3.toHex(1000000000), 3
+                gasLimit: web3.toHex(910000), //web3.toHex(210000), //'0x2710', 9w1
+                from: fromAccount,
+                to: toAddress,
+                value: web3.toHex(amount),//'0x0', //web3.toHex(1000000000000000000),
+                //data: data,
+                // EIP 155 chainId - mainnet: 1, ropsten: 3, Rinkeby 4
+                chainId: '0x4'
+            }
+
+            const tx = new ethereumjs.Tx(txParams)
+            const rlpEncoded = tx.hash(false, true)
+
+            const rlpHex = rlpEncoded.toString('hex')
+
+            console.log('txParams = ' + JSON.stringify(txParams))
+            console.log('rlphex = ' + rlpHex)
+
+            $.ajax({
+                type: "POST",
+                url: "/rpc",
+                data: JSON.stringify({
+                    method: 'get_signer_count',
+                    data: fromAccount+''
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            })
+            .done(function(result, textStatus, jqXHR){
+                console.log(result)
+                //var signercount = parseInt(result.result)
+                var ss = JSON.parse(result.result)
+                var signercount = ss.length
+                console.log(ss)
+                console.log(signercount)
+
+                $.ajax({
+                    type: "POST",
+                    url: "/rpc",
+                    data: JSON.stringify({
+                        method: 'init_tx',
+                        data: "0".repeat(40) + '|' +fromAccount + '|' + toAddress + '|' + amount + '|' + rlpHex + '|' + JSON.stringify(txParams)
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                }).done(function(result, textStatus, jqXHR){
+                    var txid = result.result
+                    var i;
+                    links = ''
+                    for (i = 0; i < signercount; i++) {
+                        links += "<a target='_blank' href='/signer.html?myaddr=" + fromAccount + "&tx=" + txid + "&id=" + ss[i] + "'>approver 0x" + ss[i] + "</a>" + "<br>";
+                    } 
+
+                    links += "<a target='_blank' href='/tx.html?myaddr=" + fromAccount + "&tx=" + txid + "'>submission page</a>" + "<br>";
+
+                    const htmlTxt="<p>You need " + signercount + " approver to process your request</p><p>" + links + "</p>"
+                    $('#signed_result').html(htmlTxt)
+                }).fail(forfail)
+
+            }).fail(forfail)
+/*
+            $.ajax({
+                type: "POST",
+                url: "/rpc",
+                data: JSON.stringify({
+                    method: 'sign_transaction',
+                    data: rlpHex
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            })
+            .done(function(result, textStatus, jqXHR){
+                console.log(result)
+                var signedTxt = ""
+                if (result.error){
+                    signedTxt = result.error
+                }
+                else{
+                    const buffer = new ethereumjs.Buffer.Buffer(result.result, 'hex')
+                    const r = buffer.slice(0, 32)
+                    const s = buffer.slice(32, 64)
+                    const v = buffer.slice(64, 65)[0]
+
+                    console.log('r = ' + r.toString('hex'))
+                    console.log('s = ' + s.toString('hex'))
+                    console.log('v = ' + v[0])
+
+                    tx.setRSV(r, s, v)
+                    const serializedTx = tx.serialize()
+                    const signedTxt = '0x' + serializedTx.toString('hex')
+                    const htmlTxt="<p>The signature is <p style='overflow-wrap: break-word'>" + signedTxt + "</p><p>You can broadcast the transaction at <a target='_blank' href='https://rinkeby.etherscan.io/pushTx'>EtherScan Broadcast Raw Transaction</a></p></p>"
+                    $('#signed_result').html(htmlTxt)
+                }
+                // web3.eth.sendRawTransaction(signedTx, function(err, hash) {
+                //     if (!err)
+                //     console.log(hash);
+                // });
+            })
+            .fail(function(jqXHR, textStatus, errorThrown){
+                var errorText = JSON.stringify(jqXHR)
+                // $('#result').text(errorText)
+                console.error(errorText)
+            })
+            */
+        })
+///////////
+
+
+                    }
+            }).fail(forfail)
+        })
+
+        //const fromAccount = '0x1625247869ce6dd17ab8c48236a94140d7ff1fed'
+ 
+    </script>
+</body>
+</html>

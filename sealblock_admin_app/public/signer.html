@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to SealBlock Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/sealblock_favicon.ico" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/web3.js"></script>
+    <script src="js/ethereumjs-tx-1.3.3.js"></script>
+    <script src="js/buffer2.js"></script>
+</head>
+<body>
+    <div class="mdl-card mdl-shadow--2dp demo-card-wide" style="margin: 20px auto; width: 800px; padding: 40px">
+        <div style="margin: auto"><img id="head-logo" src="images/sealblock_logo.png" alt="logo"></div>
+        <div class="mdl-card__title" style="margin: auto">
+            <h2 class="mdl-card__title-text">Welcome to SealBlock Demo</h2>
+        </div>
+        <div>
+            <p style="font-size: 16px">
+                 
+            </p>
+            <p></p>
+            <p style="font-size: 16px">
+                Following transaction requires your approval. Please <b>confirm the details with the wallet operator</b> before proceeding. Please make sure metamask is running within the same browser and your approver account is selected.
+            </p>
+        </div>
+        <div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 400px" id="addrbox">
+                    <input class="mdl-textfield__input" type="text" pattern="^0[x,X].*" id="to_address" />
+                    <label class="mdl-textfield__label" for="to_address">SealBlock hardware wallet address</label>
+                    <span class="mdl-textfield__error">Please use a hex number starting with 0x</span>
+                </div>
+            </div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 400px" id="toaddrbox">
+                    <input class="mdl-textfield__input" type="text" pattern="^0[x,X].*" id="to_address" />
+                    <label class="mdl-textfield__label" for="to_address">Recipient address</label>
+                    <span class="mdl-textfield__error">Please use a hex number starting with 0x</span>
+                </div>
+            </div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 400px" id="amountbox">
+                    <input class="mdl-textfield__input" type="text" id="to_address" />
+                    <label class="mdl-textfield__label" for="to_address">Amount</label>
+                </div>
+            </div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 160px" id="noncebox">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="amount">
+                    <label class="mdl-textfield__label" for="amount">Nonce</label>
+                    <span class="mdl-textfield__error">Please use a number</span>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" id="signTx" style="width: 180px; margin-left: 20px">
+                    Approve
+                </button>
+            </div>
+    
+            <p>
+                <span id='signed_result'></span>
+            </p>
+        </div>
+    </div>
+    <!-- VeriCloud SGX Demo JavaScript Code -->
+    <script>
+        //const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        //const web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        //const web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/UQ4gSLQXTJohbznyC7PP"))
+        console.log('Ethereum test network is connected : ' + web3.isConnected())
+        // all const
+        
+        const decimal = 18;
+        const decimal_expand = 1000000000000000000;
+
+         var forfail = function(jqXHR, textStatus, errorThrown){
+            var errorText = JSON.stringify(jqXHR)
+            $('#signed_result').text(errorText)
+            console.error(errorText)
+        }
+        var addr = '0'
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                  tmp = item.split("=");
+                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }        
+
+        $( document ).ready(function() {
+
+            //const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UQ4gSLQXTJohbznyC7PP"))
+            //const web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/UQ4gSLQXTJohbznyC7PP"))
+            console.log('Ethereum test network is connected : ' + web3.isConnected())
+
+            $.ajax({
+                    type: "POST",
+                    url: "/rpc",
+                    data: JSON.stringify({
+                        method: 'get_wallet_addr',
+                        data: findGetParameter('myaddr')
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                }).done(function(result, textStatus, jqXHR){
+                    if (result.error){
+                        console.log(result.error);
+                        $('#signed_result').text(result.error.message)
+                    }else{
+
+                        const fromAccount = result.result
+///////////
+        $('#fromAccount').text(fromAccount)
+
+        var balance = web3.eth.getBalance(fromAccount,function(err, result){
+            const amt = result.dividedBy(decimal_expand).toString(10)
+            $('#fromHolding').text(amt)
+        });
+        
+        //web3.eth.balanceOf(fromAccount, function(err, result){
+        //    const amt = result.dividedBy(decimal_expand).toString(10)
+        //    $('#fromHolding').text(amt)
+        //})
+
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                  tmp = item.split("=");
+                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }
+
+        txid = findGetParameter('tx')
+        sid  = findGetParameter('id')
+        console.log(findGetParameter('tx'))
+        
+        var forfail = function(jqXHR, textStatus, errorThrown){
+                var errorText = JSON.stringify(jqXHR)
+                $('#signed_result').text(errorText)
+                console.error(errorText)
+        }
+    var txinfo = {}
+    $( document ).ready(function() {
+        $.ajax({
+            type: "POST",
+            url: "/rpc",
+            data: JSON.stringify({
+                method: 'get_tx_info',
+                data: txid
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        }).done(function(result, textStatus, jqXHR){
+            txinfo = JSON.parse(result.result)
+            $("#addrbox").get(0).MaterialTextfield.change('0x' + txinfo.fromAddr);
+            $("#toaddrbox").get(0).MaterialTextfield.change('0x' + txinfo.toAddr);
+
+            $("#amountbox").get(0).MaterialTextfield.change(parseInt(txinfo.amount)/decimal_expand +"(" +txinfo.amount+ ")");
+            $("#noncebox").get(0).MaterialTextfield.change(txinfo.txid);
+            
+            var count = 0;
+            for(var key in txinfo.signer)
+                if(txinfo.signer.hasOwnProperty(key))
+                    count++;
+
+
+            //const htmlTxt="<p>"+ count +" out of "+ txinfo.signercount + " signer have signed this transaction</p>"
+            //$('#signed_result').html(htmlTxt)
+        }).fail(forfail)
+
+        $('#signTx' ).click(function () {
+
+            /*
+            $.ajax({
+                type: "POST",
+                url: "/rpc",
+                data: JSON.stringify({
+                    method: 'sign_transaction_by_id',
+                    data: txid
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            })
+            .done(function(result, textStatus, jqXHR){
+                console.log(result)
+                var signedTxt = ""
+                if (result.error){
+                    $('#signed_result').html(result.error)
+                }
+                else{ 
+
+                    const tx = new ethereumjs.Tx(txinfo.txParams)
+                    const buffer = new ethereumjs.Buffer.Buffer(result.result, 'hex')
+                    const r = buffer.slice(0, 32)
+                    const s = buffer.slice(32, 64)
+                    const v = buffer.slice(64, 65)[0]
+
+                    console.log('r = ' + r.toString('hex'))
+                    console.log('s = ' + s.toString('hex'))
+                    console.log('v = ' + v[0])
+
+                    tx.setRSV(r, s, v)
+                    const serializedTx = tx.serialize()
+                    const signedTxt = '0x' + serializedTx.toString('hex')
+                    const htmlTxt="<p>The signature is <p style='overflow-wrap: break-word'>" + signedTxt + "</p><p>You can broadcast the transaction at <a target='_blank' href='https://rinkeby.etherscan.io/pushTx'>EtherScan Broadcast Raw Transaction</a></p></p>"
+                    $('#signed_result').html(htmlTxt)
+                }
+            })
+            .fail(forfail)
+            signer_signed
+            */
+
+            var mm = txinfo.txtype +':'+  txinfo.fromAddr +':'+ txinfo.toAddr +':'+ txinfo.amount+':'+ txinfo.txid
+
+
+            var from = '0x'+sid
+            //var msg = web3.toHex('aa')
+            var msg = web3.toHex(mm)
+            var params = [msg, from]
+            var method = 'personal_sign'
+
+            web3.currentProvider.sendAsync({method,params,from},function (error, result){ 
+                console.log(error);  console.log(result)
+                if(error){
+                    $('#signed_result').text(error)
+                }else if (result.error){
+                    console.log(result.error);
+                    $('#signed_result').text(result.error.message)
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "/rpc",
+                        data: JSON.stringify({
+                            method: 'signer_signed',
+                            data: txid + '|' + sid + '|' + result.result
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                    })
+                    .done(function(result, textStatus, jqXHR){
+                        console.log(result)
+                        if (result.error){
+                            $('#signed_result').text(result.error)
+                        }
+                        else{ 
+                            $('#signed_result').html("<p>Done</p>")
+                        }
+                    })
+                    .fail(forfail)
+
+                }
+
+
+            })
+        })
+    });
+///////////
+
+
+                    }
+            }).fail(forfail)
+        })
+    </script>
+</body>
+</html>

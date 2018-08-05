@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to SealBlock Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/vericlouds_favicon.png" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/web3.js"></script>
+    <script src="js/ethereumjs-tx-1.3.3.js"></script>
+    <script src="js/buffer2.js"></script>
+</head>
+<body>
+    <div class="mdl-card mdl-shadow--2dp demo-card-wide" style="margin: 20px auto; width: 800px; padding: 40px">
+        <div style="margin: auto"><img id="head-logo" src="images/logo-205x40.png" alt="logo"></div>
+        <div class="mdl-card__title" style="margin: auto">
+            <h2 class="mdl-card__title-text">Welcome to SealBlock Demo</h2>
+        </div>
+        <div>
+            <p style="font-size: 16px">
+                SealBlock is the latest hardware enforced crypto technology which leverages Intel SGX secure enclave to protect the private key and the sensitive signing process. 
+            </p>
+            <p style="font-size: 16px">
+                In this demo, you will be able to sign any messages with the private key protected by SealBlock. You can then verify the signature on etherscan. You will also be allowed to transfer a Demo Token to your address.
+            </p> 
+            <p></p>
+            <p style="font-size: 16px">
+                Send transaction or sign a message with the SGX protected private key of wallet address <b>0x092909281e47a186aff87db45380cc34ec2860ef</b> (<span id='fromHolding'></span> DOT tokens)
+            </p>
+        </div>
+        <div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 400px">
+                    <input class="mdl-textfield__input" type="text" pattern="^0[x,X].*" id="to_address" />
+                    <label class="mdl-textfield__label" for="to_address">To address</label>
+                    <span class="mdl-textfield__error">Please use a hex number starting with 0x</span>
+                </div>
+            </div>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 160px">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="amount">
+                    <label class="mdl-textfield__label" for="amount">Amount</label>
+                    <span class="mdl-textfield__error">Please use a number</span>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" id="signTx" style="width: 180px; margin-left: 20px">
+                    Sign Transaction
+                </button>
+            </div>
+            
+                
+            
+            <div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 160px">
+                    <input class="mdl-textfield__input" type="text" name="message" id="message" />
+                    <label class="mdl-textfield__label" for="message">Message</label>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" id="signMsg" style="width: 180px; margin-left: 20px">
+                    Sign Message
+                </button>
+            </div>
+            <p>
+                <span id='signed_result'></span>
+            </p>
+        </div>
+    </div>
+    <!-- VeriCloud SGX Demo JavaScript Code -->
+    <script>
+        const web3 = new Web3(web3.currentProvider)
+        console.log('Ethereum test network is connected : ' + web3.isConnected())
+        // all const
+        console.log(web3.eth.accounts)
+
+        const contractAbi = web3.eth.contract([{"constant":false,"inputs":[{"name":"newSellPrice","type":"uint256"},{"name":"newBuyPrice","type":"uint256"}],"name":"setPrices","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"burn","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"sellPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"},{"name":"mintedAmount","type":"uint256"}],"name":"mintToken","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_value","type":"uint256"}],"name":"burnFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"buyPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"buy","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"frozenAccount","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"},{"name":"_extraData","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"},{"name":"freeze","type":"bool"}],"name":"freezeAccount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"initialSupply","type":"uint256"},{"name":"tokenName","type":"string"},{"name":"tokenSymbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"target","type":"address"},{"indexed":false,"name":"frozen","type":"bool"}],"name":"FrozenFunds","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Burn","type":"event"}]);
+        const contractAddress = '0xcecc4f5abeabb66bf4e10530ed4dc438a2e61367'
+        const decimal = 18;
+        const decimal_expand = 1000000000000000000;
+        const fromAccount = '0x092909281e47a186aff87db45380cc34ec2860ef'
+        const toAccount = '0xDb599C6EbBe7d91b69443F8a9A15097466844c53'
+        const contract = contractAbi.at(contractAddress)
+
+        contract.balanceOf(fromAccount, function(err, result){
+            const amt = result.dividedBy(decimal_expand).toString(10)
+            $('#fromHolding').text(amt)
+        })
+
+        $('#signMsg').click(function(){
+            const message = $('#message').val()
+            $.ajax({
+                type: "POST",
+                url: "/rpc",
+                data: JSON.stringify({
+                    method: 'sign_message',
+                    data: message
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            })
+            .done(function(result, textStatus, jqXHR){
+                console.log(result)
+                const resultTxt = result.error? result.error : '0x'+result.result
+                const htmlTxt="<p>The signature is <p style='overflow-wrap: break-word'>" + resultTxt + "</p><p>You can verify it at <a target='_blank' href='https://etherscan.io/verifySig'>EtherScan</a></p></p>"
+                $('#signed_result').html(htmlTxt)
+            })
+            .fail(function(jqXHR, textStatus, errorThrown){
+                var errorText = JSON.stringify(jqXHR)
+                $('#signed_result').text(errorText)
+                console.error(errorText)
+            })
+        })
+        
+        $('#signTx' ).click(function () {
+            const nonce = web3.toHex(web3.eth.getTransactionCount(fromAccount))
+            console.log('from account nonce = ' + nonce)
+
+            const amount = $('#amount').val().trim() * decimal_expand
+            const data = contract.transfer.sendTransaction(toAccount, amount, {
+                nonce: nonce, //web3.toHex(21),
+                gasPrice: web3.toHex(5000000000), //web3.toHex(1000000000),
+                gasLimit: web3.toHex(910000), //web3.toHex(210000), //'0x2710',
+                from: fromAccount,
+                to: contractAddress,
+                value: '0x0', //web3.toHex(1000000000000000000),
+                // EIP 155 chainId - mainnet: 1, ropsten: 3
+                chainId: '0x3'
+            })
+        })
+    </script>
+</body>
+</html>

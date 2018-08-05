@@ -60,4 +60,5 @@ cd go-ethereum
 
 go install -v .\cmd\geth\
 ```
+
 4.find get.exe in folder go/bin

@@ -10,7 +10,7 @@ Using SealBlock's technology, even a rogue employee would have a very difficult 
 
 ## Platforms/tools/libraries used
 
-1. [peatio](https://github.com/InfraexDev/peatio "peatio")  
+1. [peatio](https://github.com/peatio/peatio "peatio")  
 Peatio is an open-source cryptocurrency exchange implementation. We modified it a bit to meet our needs.
 
 2. [geth](https://geth.ethereum.org/ "geth")  
@@ -34,4 +34,34 @@ Used to implement admin interface.
 
 ## Instructions to run the code
 
-Although peatio is modified, the using method is not changed. [README.md](https://github.com/InfraexDev/peatio/blob/stable/README.md "README.md") file in the project's repository on GitHub helps to understand how to run the whole process.
+Although peatio is modified, the using method is not changed. [README.md](https://github.com/peatio/peatio/blob/master/README.md) file in the project's repository on GitHub helps to understand how to run the whole process.
+
+Our customized go-ethereum is based the oringinal one, we replaced the backend implementation of geth.
+
+To compile it, you will need to install Chocolatey, Git, Go, Mingw.
+
+Compile Instructions:
+
+1. install Chocolatey
+
+2. install needed libs:
+
+ ```
+ choco install git
+ choco install golang
+ choco install mingw
+ ```
+
+3. run:
+
+ ```
+ set "GOPATH=%USERPROFILE%"
+ set "Path=%USERPROFILE%\bin;%Path%"
+ setx GOPATH "%GOPATH%"
+ setx Path "%Path%"
+ cd go-ethereum
+ go install -v .\cmd\geth\
+ ```
+
+4.find *get.exe* in folder *go/bin*
+

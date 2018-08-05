@@ -34,5 +34,4 @@ Used to implement admin interface.
 
 ## Instructions to run the code
 
-Although peatio and geth is modified, the using methods of them is not changed. README.md file in the repository on GitHub of these two project shows how to run the whole process.
-
+Although peatio is modified, the using method is not changed. [README.md](https://github.com/InfraexDev/peatio/blob/stable/README.md "README.md") file in the project's repository on GitHub helps to understand how to run the whole process.
